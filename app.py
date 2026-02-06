@@ -1,13 +1,24 @@
 import json
-from flask import Flask
+from json import JSONDecodeError
+
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 POSTS_FILE = "posts.json"
 
+def load_posts():
+    try:
+        with open("posts.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+    except JSONDecodeError:
+        return []
+
 @app.route('/')
 def index():
-    # add code here to fetch the job posts from a file
+    blog_posts = load_posts()
     return render_template('index.html', posts=blog_posts)
 
 if __name__ == '__main__':
