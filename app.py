@@ -14,7 +14,7 @@ def load_posts():
     or contains invalid JSON (Error Handling).
     """
     try:
-        with open("posts.json", "r") as f:
+        with open(POSTS_FILE, "r") as f:
             return json.load(f)
     except FileNotFoundError:
         return []
@@ -26,13 +26,13 @@ def save_posts(posts):
     Save the given list of blog posts to the JSON file.
     """
     with open(POSTS_FILE, "w") as f:
-        json.dump(posts, f, indent=4)
+        json.dump(posts, f, indent=4, ensure_ascii=False)
 
 @app.route('/')
 def index():
     """
     Start page (Home route).
-    Displays all blog posts loaded fro the JSON file.
+    Displays all blog posts loaded from the JSON file.
     """
     blog_posts = load_posts()
     return render_template('index.html', posts=blog_posts)
@@ -71,7 +71,21 @@ def add():
         # Redirect to home page after successful creation.
         return redirect(url_for("index"))
 
+    # Get request.
     return render_template('add.html')
+
+@app.route('/delete/<int:post_id>')
+def delete(post_id):
+    posts = load_posts()
+
+    # Remove the post with the given ID.
+    posts = [post for post in posts if post.get("id") != post_id]
+
+    save_posts(posts)
+
+    # Redirect back to the home page.
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5001, debug=True)
