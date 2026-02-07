@@ -42,7 +42,7 @@ def add():
     """
     Add route.
     GET: Display the form to create a new blog post.
-    POST: Process the from and save a new blog post.
+    POST: Process the form and save a new blog post.
     """
     if request.method == 'POST':
         author = request.form.get("author", "").strip()
