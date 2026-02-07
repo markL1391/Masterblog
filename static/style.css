@@ -142,3 +142,8 @@ input:focus, textarea:focus {
   color: #7f1d1d;
   font-size: 14px;
 }
+
+.like-btn {
+  gap: 6px;
+  font-size: 14px;
+}

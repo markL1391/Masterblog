@@ -54,6 +54,7 @@ def index():
     blog_posts = load_posts()
     return render_template("index.html", posts=blog_posts)
 
+
 @app.route('/add', methods=['GET', 'POST'])
 def add():
     """
@@ -149,6 +150,7 @@ def update(post_id):
 
     # GET request, displays the update.html page.
     return render_template("update.html", post=post)
+
 
 @app.route('/like/<int:post_id>')
 def like(post_id):
