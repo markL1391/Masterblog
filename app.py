@@ -15,7 +15,13 @@ def load_posts():
     """
     try:
         with open(POSTS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+            posts = json.load(f)
+
+        # Add likes if missing.
+        for post in posts:
+            post.setdefault("likes", 0)
+        return posts
+
     except FileNotFoundError:
         return []
     except JSONDecodeError:
@@ -31,6 +37,8 @@ def save_posts(posts):
 
 
 def fetch_post_by_id(posts, post_id):
+    """Return the post with the given ID, or None if not found.
+    """
     for post in posts:
         if post.get("id") == post_id:
             return post
@@ -44,7 +52,7 @@ def index():
     Displays all blog posts loaded from the JSON file.
     """
     blog_posts = load_posts()
-    return render_template('index.html', posts=blog_posts)
+    return render_template("index.html", posts=blog_posts)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add():
@@ -71,7 +79,8 @@ def add():
             "id": new_id,
             "author": author,
             "title": title,
-            "content": content
+            "content": content,
+            "likes": 0
         }
 
         posts.append(new_post)
@@ -81,7 +90,7 @@ def add():
         return redirect(url_for("index"))
 
     # Get request.
-    return render_template('add.html')
+    return render_template("add.html")
 
 
 @app.route('/delete/<int:post_id>')
@@ -99,14 +108,14 @@ def delete(post_id):
     save_posts(posts)
 
     # Redirect back to the home page.
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
 
 
 @app.route('/update/<int:post_id>', methods=['GET', 'POST'])
 def update(post_id):
     """
     Update route.
-    GET: Displays the edit pre-filled with the current blog post data.
+    GET: Displays the edit form pre-filled with the current blog post data.
     POST: Updates the blog post with the submitted form data, saves changes
     to the JSON file and redirects to the home page.
     """
@@ -136,10 +145,29 @@ def update(post_id):
         # Update the post in the JSON file.
         save_posts(posts)
         # Redirect back to index.
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
     # GET request, displays the update.html page.
-    return render_template('update.html', post=post)
+    return render_template("update.html", post=post)
 
-if __name__ == '__main__':
+@app.route('/like/<int:post_id>')
+def like(post_id):
+    """
+    Like route.
+    Increases the like counter of the blog post with the given ID
+    and redirects back to the home page.
+    """
+    posts = load_posts()
+    post = fetch_post_by_id(posts, post_id)
+
+    if post is None:
+        return "Post not found", 404
+
+    # Increase the like counter by one.
+    post["likes"] += 1
+    save_posts(posts)
+
+    return redirect(url_for("index"))
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)
