@@ -23,8 +23,11 @@
                 <p>{{ post.content }}</p>
 
                 <a class="btn btn-ghost"
-                    href="{{ url_for('delete', post_id=post.id) }}">
-                    Delete
+                   href="{{ url_for('update', post_id=post.id) }}"> Edit
+                </a>
+
+                <a class="btn btn-ghost"
+                   href="{{ url_for('delete', post_id=post.id) }}"> Delete
                 </a>
             </div>
         {% endfor %}
