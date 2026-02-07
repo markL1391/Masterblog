@@ -55,6 +55,8 @@ Blog posts are stored in `posts.json` using the following structure:
 | `/delete/<post_id>` | GET       | Delete a blog post         |
 | `/like/<post_id>`   | GET       | Increase like counter      |
 
+---
+
 ## How to Run the Application
 
 1. Create and activate a virtual environment (optional but recommended)
